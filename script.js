@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     requestAnimationFrame(frame);
   }
-  const revealItems = $$(".waste-card,.solution-card,.blog-card,.impact-stat,.intro-copy,.intro-visual,.form-card,.sorter-panel,.faq-item");
+  const revealItems = $$(".waste-card,.solution-card,.blog-card,.team-card,.impact-stat,.intro-copy,.intro-visual,.form-card,.sorter-panel,.faq-item");
   revealItems.forEach(item => item.classList.add("js-reveal"));
   if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
     const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
