@@ -6,6 +6,45 @@ document.addEventListener("DOMContentLoaded", () => {
   // Mobile navigation: toggle, close after selecting a section, and support Escape.
   const menuToggle = $(".menu-toggle");
   const navLinks = $("#nav-links");
+  const themeToggle = $("#theme-toggle");
+  const root = document.documentElement;
+  const colorScheme = window.matchMedia("(prefers-color-scheme: dark)");
+  const savedTheme = localStorage.getItem("ecowaste-theme");
+  let currentTheme = savedTheme === "dark" || savedTheme === "light" || savedTheme === "system"
+    ? savedTheme
+    : "system";
+  function setTheme(theme) {
+    currentTheme = theme;
+    const isDark = theme === "dark" || (theme === "system" && colorScheme.matches);
+    const nextTheme = theme === "system" ? (isDark ? "light" : "dark") : theme === "dark" ? "system" : "dark";
+    const label = theme[0].toUpperCase() + theme.slice(1);
+    root.dataset.theme = isDark ? "dark" : "light";
+    root.dataset.themeMode = theme;
+    $(".theme-toggle-label", themeToggle).textContent = label;
+    themeToggle.setAttribute("aria-label", `Color theme: ${label}. Activate to switch to ${nextTheme[0].toUpperCase() + nextTheme.slice(1)}.`);
+    themeToggle.title = `Color theme: ${label}`;
+    $('meta[name="theme-color"]').content = isDark ? "#0d1b13" : "#174d35";
+  }
+  setTheme(currentTheme);
+  themeToggle.addEventListener("click", () => {
+    const nextTheme = currentTheme === "system"
+      ? (colorScheme.matches ? "light" : "dark")
+      : currentTheme === "dark" ? "system" : "dark";
+    setTheme(nextTheme);
+    localStorage.setItem("ecowaste-theme", nextTheme);
+  });
+  colorScheme.addEventListener("change", () => {
+    if (currentTheme === "system") setTheme("system");
+  });
+  document.addEventListener("click", event => {
+    const control = event.target.closest("button:not(:disabled), a.btn, .nav-links > a, .text-link");
+    if (!control) return;
+    control.classList.remove("click-feedback");
+    void control.offsetWidth;
+    control.classList.add("click-feedback");
+    control.addEventListener("animationend", () => control.classList.remove("click-feedback"), { once: true });
+  });
+
   function closeMenu() {
     navLinks.classList.remove("open");
     menuToggle.setAttribute("aria-expanded", "false");
